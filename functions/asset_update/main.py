@@ -1,6 +1,7 @@
 """Cloud Function that updates Stock Market data on Big Query"""
 from string import Template
 import os
+import re
 import requests
 import pandas as pd
 import functions_framework
@@ -55,6 +56,12 @@ def main(request: Request) -> Response:
     res = requests.get(url)
 
     df = pd.DataFrame.from_dict(res.json()[asset["key"]], orient="index")
+
+    # Column names must contain only letters, numbers, and underscores
+    df = df.rename(columns=lambda x: re.sub(r"^\d\w?\. |[\(\)]", "", x)).rename(
+        columns=lambda x: re.sub(" ", "_", x)
+    )
+
     df.to_gbq(
         destination_table=f"assets.{symbol.replace('.', '_')}",
         project_id="corujo",
