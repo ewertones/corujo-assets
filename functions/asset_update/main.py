@@ -56,7 +56,7 @@ def main(request: Request) -> Response:
 
     df = pd.DataFrame.from_dict(res.json()[asset["key"]], orient="index")
     df.to_gbq(
-        destination_table=f"assets.{symbol}",
+        destination_table=f"assets.{symbol.replace('.', '_')}",
         project_id="corujo",
         if_exists="replace",
         location="us-central1",
