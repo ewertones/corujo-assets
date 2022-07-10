@@ -36,5 +36,5 @@ jobs:
         run: |
           path="./.github/workflows/deploy_cloud_functions.sh"
           chmod +x $path
-          path
+          $path
         shell: bash
