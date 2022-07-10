@@ -70,6 +70,7 @@ def main(request: Request) -> Response:
         project_id="corujo",
         if_exists="replace",
         location="us-central1",
+        table_schema=[{"name": "date", "type": "DATE"}],
     )
 
     return f"{len(df.index)} rows retrieved for {symbol} from {df.index.min()} to {df.index.max()}!"
