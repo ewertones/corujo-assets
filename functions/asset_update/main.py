@@ -63,6 +63,8 @@ def main(request: Request) -> Response:
         columns=lambda x: re.sub(" ", "_", x)
     )
 
+    df["date"] = pd.to_datetime(df.index)
+
     df.to_gbq(
         destination_table=f"assets.{symbol.replace('.', '_')}",
         project_id="corujo",
