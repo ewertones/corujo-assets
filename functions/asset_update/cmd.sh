@@ -2,7 +2,8 @@
 name="asset_update"
 
 folder="./functions/${name}"
-echo "cmd.sh" > ${folder}/.gcloudignore
+echo "cmd.sh
+.gcloudignore" > ${folder}/.gcloudignore
 
 gcloud functions \
   deploy $name \
