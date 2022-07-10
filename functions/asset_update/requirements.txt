@@ -1,0 +1,5 @@
+requests
+flask
+functions-framework
+pandas
+pandas-gbq
