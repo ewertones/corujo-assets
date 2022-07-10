@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  PROJECT_NUMBER: 592278944231
+  PROJECT_ID: corujo
+  SERVICE: corujo-backend
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: "read"
+      id-token: "write"
+
+    steps:
+      - uses: "actions/checkout@v3"
+
+      - name: "Authenticate in Google Cloud"
+        uses: "google-github-actions/auth@v0"
+        with:
+          workload_identity_provider: "projects/${{ env.PROJECT_NUMBER }}/locations/global/workloadIdentityPools/pool/providers/github"
+          service_account: "${{ env.PROJECT_ID }}@appspot.gserviceaccount.com"
+          project_id: ${{ env.PROJECT_ID }}
+          export_environment_variables: true
+
+      - name: "Set up Cloud SDK"
+        uses: "google-github-actions/setup-gcloud@v0"
+
+      - name: "Deploy Cloud Functions"
+         run: ./.github/workflows/deploy_cloud_functions.sh
