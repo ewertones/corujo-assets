@@ -1,0 +1,7 @@
+pandas
+functions-framework
+google-cloud-bigquery
+google-cloud-logging
+flask
+db_dtypes
+tensorflow
