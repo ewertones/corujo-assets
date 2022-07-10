@@ -1,7 +1,7 @@
 #! /bin/bash
 
 gcloud functions \
-  deploy first_test \
+  deploy first_function \
   --runtime python39 \
   --trigger-http \
   --region us-central1 \
