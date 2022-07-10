@@ -33,4 +33,8 @@ jobs:
         uses: "google-github-actions/setup-gcloud@v0"
 
       - name: "Deploy Cloud Functions"
-        run: ./.github/workflows/deploy_cloud_functions.sh
+        run: |
+          path="./.github/workflows/deploy_cloud_functions.sh"
+          chmod +x $path
+          path
+        shell: bash
