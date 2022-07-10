@@ -1,10 +1,10 @@
 #! /bin/bash
-name = daily_update_btc
+name = "daily_update_btc"
 
-folder = ./scheduler/$name
+folder = "./scheduler/${name}"
 
-symbol = BTC
-asset = CRYPTO
+symbol = "BTC"
+asset = "CRYPTO"
 
 gcloud scheduler \
   jobs create http $name \

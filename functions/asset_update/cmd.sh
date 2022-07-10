@@ -1,8 +1,8 @@
 #! /bin/bash
-name = asset_update
+name = "asset_update"
 
-folder = ./functions/$name
-echo "cmd.sh" > $folder/.gcloudignore
+folder = "./functions/${name}"
+echo "cmd.sh" > ${folder}/.gcloudignore
 
 gcloud functions \
   deploy $name \
