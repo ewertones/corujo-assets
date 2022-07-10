@@ -3,7 +3,7 @@
 # latest Commit
 LATEST_COMMIT=$(git rev-parse HEAD)
 
-for folder in functions/*; do
+for folder in functions/* scheduler/*; do
     COMMIT=$(git log -1 --format=format:%H --full-diff $folder/*)
 
     if [[ $COMMIT = $LATEST_COMMIT ]]; then
