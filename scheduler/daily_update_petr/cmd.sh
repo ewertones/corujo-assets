@@ -1,10 +1,10 @@
 #! /bin/bash
-name = daily_update_btc
+name="daily_update_petr"
 
-folder = "./scheduler/${name}"
+folder="./scheduler/${name}"
 
-symbol = "PETR3.SAO"
-asset = "STOCK"
+symbol="PETR3.SAO"
+asset="STOCK"
 
 gcloud scheduler \
   jobs create http $name \
