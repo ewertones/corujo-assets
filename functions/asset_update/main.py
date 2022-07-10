@@ -56,6 +56,7 @@ def main(request: Request) -> Response:
     res = requests.get(url)
 
     df = pd.DataFrame.from_dict(res.json()[asset["key"]], orient="index")
+    df = df.apply(pd.to_numeric, errors="ignore")
 
     # Column names must contain only letters, numbers, and underscores
     df = df.rename(columns=lambda x: re.sub(r"^\d\w?\. |[\(\)]", "", x)).rename(
