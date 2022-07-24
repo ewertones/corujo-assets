@@ -18,6 +18,7 @@ def main(request: Request) -> Response:
             "function": "TIME_SERIES_DAILY",
             "symbol": Template("symbol=$symbol"),
             "key": "Time Series (Daily)",
+            "to_drop": ["5. volume"],
         },
         "FOREX": {
             "function": "FX_DAILY",
@@ -28,6 +29,14 @@ def main(request: Request) -> Response:
             "function": "DIGITAL_CURRENCY_DAILY",
             "symbol": Template("symbol=$symbol&market=BRL"),
             "key": "Time Series (Digital Currency Daily)",
+            "to_drop": [
+                "1b. open (USD)",
+                "2b. high (USD)",
+                "3b. low (USD)",
+                "4b. close (USD)",
+                "5. volume",
+                "6. market cap (USD)",
+            ],
         },
     }
 
@@ -56,10 +65,15 @@ def main(request: Request) -> Response:
     res = requests.get(url)
 
     df = pd.DataFrame.from_dict(res.json()[asset["key"]], orient="index")
+
+    to_drop = asset.get("to_drop")
+    if to_drop:
+        df = df.drop(to_drop, axis=1)
+
     df = df.apply(pd.to_numeric, errors="ignore")
 
     # Column names must contain only letters, numbers, and underscores
-    df = df.rename(columns=lambda x: re.sub(r"^\d\w?\. |[\(\)]", "", x)).rename(
+    df = df.rename(columns=lambda x: re.sub(r"^\d\w?\. | \(.*", "", x)).rename(
         columns=lambda x: re.sub(" ", "_", x)
     )
 
