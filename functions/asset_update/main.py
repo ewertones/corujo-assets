@@ -79,6 +79,9 @@ def main(request: Request) -> Response:
 
     df["date"] = pd.to_datetime(df.index)
 
+    df["asset"] = request.args["asset"]
+    df["asset_type"] = request.args["symbol"]
+
     df.to_gbq(
         destination_table=f"assets.{symbol.replace('.', '_')}",
         project_id="corujo",
