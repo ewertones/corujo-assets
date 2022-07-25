@@ -4,8 +4,4 @@ google-cloud-bigquery
 google-cloud-logging
 flask
 db_dtypes
-
-# TODO: Remove dev requirements
-openpyxl
-black
-pylint
+tensorflow

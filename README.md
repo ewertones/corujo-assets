@@ -11,7 +11,7 @@ https://corujo.com.br é um site de previsão de ativos da bolsa. Este repositó
 Para testar localmente as Cloud Functions, você provavelmente necessitará de uma Service Account para o projeto do corujo. Após consegui-la, deixe como variável de ambiente rodando:
 
 ```bash
-export GOOGLE_APPLICATION_CREDENTIALS="/home/$USER/Documents/repos/corujo/corujo-assets/corujo.json"
+export GOOGLE_APPLICATION_CREDENTIALS="/home/$USER/{REPLACE_WITH_FOLDER}/corujo.json"
 ```
 
 E rode as Cloud Functions com o comando:
