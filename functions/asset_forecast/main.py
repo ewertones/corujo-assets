@@ -70,7 +70,7 @@ def main(request: Request) -> Response:
         # Convert date column into seconds
         df["timestamp"] = pd.to_datetime(df["date"]).map(pd.Timestamp.timestamp)
         df = df.sort_values(by="timestamp")
-        last_date = df.tail(1)["date"]
+        last_date = df["date"].iat[-1]
 
         # Drop date, asset & type columns
         df = df[["timestamp", "open", "high", "low", "close"]]
@@ -123,13 +123,18 @@ def main(request: Request) -> Response:
         )
 
         # Update BigQuery
-        last_date["next_close_value"] = predictions[0, -1]
-        last_date.to_gbq(
+        prediction_df = pd.DataFrame(
+            {"date": [last_date], "next_close": [predictions[0, -1]]}
+        )
+        prediction_df.to_gbq(
             destination_table=f"predictions.{table.table_id}",
             project_id="corujo",
             if_exists="append",
             location="us-central1",
-            table_schema=[{"name": "date", "type": "DATE"}],
+            table_schema=[
+                {"name": "date", "type": "DATE"},
+                {"name": "next_close", "type": "FLOAT"},
+            ],
         )
 
     return "DONE!", 200
