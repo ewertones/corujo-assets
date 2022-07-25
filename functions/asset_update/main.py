@@ -80,7 +80,7 @@ def main(request: Request) -> Response:
     df["date"] = pd.to_datetime(df.index)
 
     df["asset"] = request.args["asset"]
-    df["symbol"] = request.args["symbol"]
+    df["symbol"] = request.args["symbol"].replace(".", "_")
 
     df.to_gbq(
         destination_table=f"assets.{symbol.replace('.', '_')}",
