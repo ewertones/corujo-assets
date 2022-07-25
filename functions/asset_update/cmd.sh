@@ -7,10 +7,11 @@ echo "cmd.sh
 
 gcloud functions \
   deploy $name \
-  --runtime python39 \
+  --runtime python310 \
   --trigger-http \
   --region us-central1 \
   --set-env-vars 'PROJECT=bi-forecast' \
   --entry-point main \
   --allow-unauthenticated \
-  --source $folder
+  --source $folder \
+  --memory 1024MB
