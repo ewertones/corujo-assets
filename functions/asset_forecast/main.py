@@ -124,7 +124,7 @@ def main(request: Request) -> Response:
 
         # Update BigQuery
         last_date["next_close_value"] = predictions[0, -1]
-        last_date.to_gbq(
+        last_date.to_frame().to_gbq(
             destination_table=f"predictions.{table.table_id}",
             project_id="corujo",
             if_exists="append",
