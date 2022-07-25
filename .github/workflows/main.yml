@@ -32,7 +32,7 @@ jobs:
       - name: "Set up Cloud SDK"
         uses: "google-github-actions/setup-gcloud@v0"
 
-      - name: "Deploy Cloud Functions & Scheduler"
+      - name: "Deploy Cloud Functions"
         run: |
           path="./.github/workflows/deploy_cloud_functions.sh"
           chmod +x $path
