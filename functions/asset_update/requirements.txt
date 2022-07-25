@@ -1,5 +1,7 @@
-requests
+db_dtypes
 flask
 functions-framework
+google-cloud-logging
+requests
 pandas
 pandas-gbq
