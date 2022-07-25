@@ -1,4 +1,5 @@
 #! /bin/bash
+
 name="asset_forecast"
 
 folder="./functions/${name}"
