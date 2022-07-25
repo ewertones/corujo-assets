@@ -23,8 +23,8 @@ def create_seq(df, seq_len):
     return np.array(data)
 
 
-def split_data(data):
-    n_train = int(np.round(TRAIN_PERCENT * data.shape[0]))
+def split_data(data, train_percent):
+    n_train = int(np.round(train_percent * data.shape[0]))
 
     x_train = data[:n_train, :, :-1]
     y_train = data[:n_train, :, -1]
@@ -96,7 +96,7 @@ def main(request: Request) -> Response:
         df_norm_seq = create_seq(df_norm, SEQ_LEN)
 
         # Split data
-        x_train, y_train, x_val, y_val = split_data(df_norm_seq)
+        x_train, y_train, x_val, y_val = split_data(df_norm_seq, TRAIN_PERCENT)
 
         # Create model
         model = tf.keras.models.Sequential(
