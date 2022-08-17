@@ -15,4 +15,4 @@ gcloud functions \
   --allow-unauthenticated \
   --source $folder \
   --memory 1024MB
-  --timeout 540
+  --timeout 540s
