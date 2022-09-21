@@ -126,6 +126,11 @@ def main(request: Request) -> Response:
         prediction_df = pd.DataFrame(
             {"date": [last_date], "next_close": [predictions[0, -1]]}
         )
+
+        bq_client.query(
+            f"DELETE FROM `predictions.{table.table_id}` WHERE date = '{last_date}'"
+        ).result()
+
         prediction_df.to_gbq(
             destination_table=f"predictions.{table.table_id}",
             project_id="corujo",
