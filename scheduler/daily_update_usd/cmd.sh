@@ -6,6 +6,8 @@ folder="./scheduler/${name}"
 symbol="USD"
 asset="FOREX"
 
+gcloud scheduler jobs delete $name
+
 gcloud scheduler \
   jobs create http $name \
   --location us-central1 \
