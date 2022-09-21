@@ -5,7 +5,8 @@ folder="./scheduler/${name}"
 
 gcloud scheduler \
   jobs delete $name \
-  --location us-central1
+  --location us-central1 \
+  --quiet
 
 gcloud scheduler \
   jobs create http $name \
