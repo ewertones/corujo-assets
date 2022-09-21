@@ -1,20 +1,11 @@
 #! /bin/bash
 
-# latest Commit
-LATEST_COMMIT=$(git rev-parse HEAD)
+modified_folders=$(git diff --name-only HEAD^ HEAD functions/ scheduler/ | xargs -L1 dirname | uniq)
 
-for folder in functions/* scheduler/*; do
-    COMMIT=$(git log -1 --format=format:%H --full-diff $folder/*)
-
-    if [[ $COMMIT = $LATEST_COMMIT ]]; then
-
-        echo "Changes have been made to the '$folder' model";
-
-        /bin/bash "${folder}"/cmd.sh
-
-    else
-
-        echo "No change detected in the '${folder}' folder";
-
-    fi;
+for function in $modified_folders; do
+    FILE="${function}/cmd.sh"
+    if test -f $FILE; then
+        echo "Changes have been made to '$function' function";
+        chmod +x $FILE && $FILE
+    fi
 done
