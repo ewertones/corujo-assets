@@ -6,7 +6,9 @@ folder="./scheduler/${name}"
 symbol="PETR3.SAO"
 asset="STOCK"
 
-gcloud scheduler jobs delete $name
+gcloud scheduler \
+  jobs delete $name \
+  --location us-central1
 
 gcloud scheduler \
   jobs create http $name \

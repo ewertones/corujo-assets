@@ -6,7 +6,9 @@ folder="./scheduler/${name}"
 symbol="BTC"
 asset="CRYPTO"
 
-gcloud scheduler jobs delete $name
+gcloud scheduler \
+  jobs delete $name \
+  --location us-central1
 
 gcloud scheduler \
   jobs create http $name \
