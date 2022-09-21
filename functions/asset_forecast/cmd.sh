@@ -15,4 +15,6 @@ gcloud functions \
   --entry-point main \
   --allow-unauthenticated \
   --source $folder \
+  --max-instances 1 \
+  --timeout 540s \
   --memory 1024MB
