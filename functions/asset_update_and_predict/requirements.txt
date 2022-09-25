@@ -1,0 +1,12 @@
+db_dtypes
+flask
+functions-framework
+google-cloud-logging
+google-cloud-bigquery
+google-cloud-storage
+requests
+pandas
+pandas-gbq
+pyyaml
+SQLAlchemy
+psycopg2
