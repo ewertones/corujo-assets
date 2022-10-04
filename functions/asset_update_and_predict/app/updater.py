@@ -28,9 +28,6 @@ def compile_and_fit(
 ) -> tf.keras.callbacks.History:
     early_stopping = EarlyStopping(monitor="val_loss", patience=patience, mode="min")
 
-    LOG_PATH = f"logs/fit/{datetime.now().strftime('%Y%m%d-%H%M%S')}"
-    tensorboard_callback = TensorBoard(log_dir=LOG_PATH, histogram_freq=1)
-
     CHECKPOINT_PATH = "tmp/checkpoint"
     checkpoint = ModelCheckpoint(
         CHECKPOINT_PATH, monitor="val_loss", save_best_only=True, save_weights_only=True
@@ -47,7 +44,7 @@ def compile_and_fit(
         y_train,
         epochs=epochs,
         validation_data=(x_val, y_val),
-        callbacks=[early_stopping, tensorboard_callback, checkpoint],
+        callbacks=[early_stopping, checkpoint],
     )
 
     history = model.load_weights(CHECKPOINT_PATH)
