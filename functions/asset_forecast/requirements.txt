@@ -1,8 +1,0 @@
-db_dtypes
-flask
-functions-framework
-google-cloud-bigquery
-google-cloud-logging
-pandas
-pandas-gbq
-tensorflow

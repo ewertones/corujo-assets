@@ -38,15 +38,13 @@ def main(request: Request) -> tuple[str, int]:
 
     logging.info(f"YAML read. {len(assets)} assets parsed!")
     for asset in assets:
-        # logging.info(f"Updating {asset.name} asset...")
+        logging.info(f"Updating {asset.name} asset...")
+        asset.insert_into_db_if_not_exists()
 
-        # asset.insert_into_db_if_not_exists()
-
-        # logging.info("Updating historical data...")
-        # asset.update_historical_data()
+        logging.info("Updating historical data...")
+        asset.update_historical_data()
 
         logging.info("Forecasting future values...")
         asset.predict_future_values()
-        break  # TODO: Remove
 
     return "DONE", 200
