@@ -1,20 +1,20 @@
 import os
 import re
+from datetime import datetime, time, timezone, timedelta
 from string import Template
 import requests
 import pandas as pd
-import logging
 
-from sqlalchemy import create_engine, insert, Table, MetaData
-from sqlalchemy.orm import Session, mapper
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session
+from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy.sql import func
 
 from models.models import Assets, AssetPredictions, AssetValues
 
 import numpy as np
 import tensorflow as tf
-from tensorflow.keras.callbacks import EarlyStopping, TensorBoard, ModelCheckpoint
-from datetime import datetime, time, timezone, timedelta
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 
 
 def compile_and_fit(
@@ -23,14 +23,10 @@ def compile_and_fit(
     y_train: np.ndarray,
     x_val: np.ndarray,
     y_val: np.ndarray,
-    patience: int = 10,
-    epochs: int = 50,
-) -> tf.keras.callbacks.History:
-    early_stopping = EarlyStopping(monitor="val_loss", patience=patience, mode="min")
-
-    CHECKPOINT_PATH = "tmp/checkpoint"
-    checkpoint = ModelCheckpoint(
-        CHECKPOINT_PATH, monitor="val_loss", save_best_only=True, save_weights_only=True
+) -> tf.keras.models.Sequential:
+    PATIENCE = 20
+    early_stopping = EarlyStopping(
+        monitor="val_loss", patience=PATIENCE, mode="min", restore_best_weights=True
     )
 
     model.compile(
@@ -39,17 +35,16 @@ def compile_and_fit(
         metrics=[tf.keras.metrics.MeanAbsoluteError()],
     )
 
+    EPOCHS = 100
     model.fit(
         x_train,
         y_train,
-        epochs=epochs,
+        epochs=EPOCHS,
         validation_data=(x_val, y_val),
-        callbacks=[early_stopping, checkpoint],
+        callbacks=[early_stopping],
     )
 
-    history = model.load_weights(CHECKPOINT_PATH)
-
-    return history
+    return model
 
 
 def create_seq(df: pd.DataFrame, seq_len: int) -> np.array:
@@ -85,9 +80,6 @@ class AssetUpdater:
         self.currency = currency
         self.description = description
         self.db_engine = self.get_engine()
-
-    def __repr__(self):
-        return f"AssetUpdater(name={self.name}, type={self._type}, symbol={self.symbol}, currency={self.currency}, description={self.description})"
 
     @staticmethod
     def get_engine():
@@ -180,9 +172,13 @@ class AssetUpdater:
     def predict_future_values(self):
         with Session(self.db_engine) as session:
             asset = session.query(Assets).filter_by(symbol=self.symbol).first()
-            df = pd.read_sql(
-                session.query(AssetValues).filter_by(asset_id=asset.id).statement,
-                self.db_engine,
+            df = (
+                pd.read_sql(
+                    session.query(AssetValues).filter_by(asset_id=asset.id).statement,
+                    self.db_engine,
+                )
+                .sort_values(by="date")
+                .reset_index()
             )
 
         # Convert date column into seconds
@@ -195,9 +191,6 @@ class AssetUpdater:
         ).timestamp()
         df = df[df["timestamp"] < midnight_ts]
         last_date = df["date"].iat[-1]
-
-        # Order by timestamp
-        df = df.sort_values(by="timestamp").reset_index()
 
         # Drop unused columns
         df = df[["timestamp", "open", "high", "low", "close"]]
@@ -216,7 +209,7 @@ class AssetUpdater:
 
         df_norm = (df - train_mean) / train_std
 
-        SEQ_LEN = 30
+        SEQ_LEN = 7
         df_norm_seq = create_seq(df_norm, SEQ_LEN)
         df_norm_seq, to_predict = df_norm_seq[:-1], df_norm_seq[-1]
 
@@ -246,13 +239,13 @@ class AssetUpdater:
         )
 
         # Fit model
-        history = compile_and_fit(model, x_train, y_train, x_val, y_val)
+        trained_model = compile_and_fit(model, x_train, y_train, x_val, y_val)
 
         # Predict next values
         prediction_column_number = len(df.columns) - 1
         to_predict = np.delete(to_predict, prediction_column_number, axis=1)
         to_predict = np.expand_dims(to_predict, axis=0)
-        predictions_norm = model.predict(to_predict)
+        predictions_norm = trained_model.predict(to_predict)
         next_close = predictions_norm[0][-1]
         next_close = next_close * train_std["next_close"] + train_mean["next_close"]
 
@@ -260,9 +253,14 @@ class AssetUpdater:
         with Session(self.db_engine) as session:
             asset = session.query(Assets).filter_by(symbol=self.symbol).first()
 
-            asset_prediction = AssetPredictions(
-                asset_id=asset.id, date=next_day, close=next_close
+            new_values = {"asset_id": asset.id, "date": next_day, "close": next_close}
+            stmt = (
+                insert(AssetPredictions)
+                .values(**new_values)
+                .on_conflict_do_update(
+                    constraint="ap_uidx",
+                    set_=dict(**new_values, updated_at=func.now()),
+                )
             )
-
-            session.add(asset_prediction)
+            session.execute(stmt)
             session.commit()
