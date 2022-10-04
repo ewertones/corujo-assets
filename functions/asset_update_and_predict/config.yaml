@@ -1,0 +1,18 @@
+assets:
+  - name: bitcoin
+    symbol: BTC
+    type: CRYPTO
+    currency: BRL
+    description: "Moeda digital descentralizada"
+
+  - name: petrobras
+    symbol: PETR3.SAO
+    type: STOCK
+    currency: BRL
+    description: "Petróleo brasileiro"
+
+  - name: dollar
+    symbol: USD
+    type: FOREX
+    currency: BRL
+    description: "Dólar"

@@ -1,10 +1,7 @@
 #! /bin/bash
-name="daily_update_usd"
+name="daily_updater"
 
 folder="./scheduler/${name}"
-
-symbol="USD"
-asset="FOREX"
 
 gcloud scheduler \
   jobs delete $name \
@@ -16,4 +13,4 @@ gcloud scheduler \
   --attempt-deadline 540s \
   --location us-central1 \
   --schedule "0 * * * *" \
-  --uri "https://us-central1-corujo.cloudfunctions.net/asset_update/?symbol=${symbol}&asset=${asset}"
+  --uri "https://us-central1-corujo.cloudfunctions.net/${name}"
