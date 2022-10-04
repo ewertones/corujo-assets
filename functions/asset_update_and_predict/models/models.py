@@ -59,10 +59,10 @@ class AssetPredictions(Base):
     asset_id = Column(Integer, ForeignKey("assets.id"), nullable=False)
     asset = relationship("Assets", back_populates="asset_predictions")
     date = Column(Date, nullable=False)
-    _open = Column("open", NUMERIC(15, 3), nullable=False)
+    _open = Column("open", NUMERIC(15, 3))
     close = Column(NUMERIC(15, 3), nullable=False)
-    high = Column(NUMERIC(15, 3), nullable=False)
-    low = Column(NUMERIC(15, 3), nullable=False)
+    high = Column(NUMERIC(15, 3))
+    low = Column(NUMERIC(15, 3))
     volume = Column(NUMERIC(15, 3))
     created_at = Column(
         DateTime(timezone=True), server_default=func.now(), nullable=False

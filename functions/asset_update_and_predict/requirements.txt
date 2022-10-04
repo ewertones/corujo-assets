@@ -10,3 +10,4 @@ pandas-gbq
 pyyaml
 SQLAlchemy
 psycopg2
+tensorflow
