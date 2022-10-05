@@ -14,7 +14,7 @@ from models.models import Assets, AssetPredictions, AssetValues
 
 import numpy as np
 import tensorflow as tf
-from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
+from tensorflow.keras.callbacks import EarlyStopping
 
 
 def compile_and_fit(
@@ -24,14 +24,17 @@ def compile_and_fit(
     x_val: np.ndarray,
     y_val: np.ndarray,
 ) -> tf.keras.models.Sequential:
-    PATIENCE = 20
-    early_stopping = EarlyStopping(
+    PATIENCE = 15
+    val_early_stopping = EarlyStopping(
         monitor="val_loss", patience=PATIENCE, mode="min", restore_best_weights=True
+    )
+    train_early_stopping = EarlyStopping(
+        monitor="loss", patience=PATIENCE, mode="min", restore_best_weights=True
     )
 
     model.compile(
-        loss=tf.keras.losses.MeanSquaredError(),
-        optimizer=tf.keras.optimizers.Adam(),
+        loss="mean_absolute_error",
+        optimizer="adam",
         metrics=[tf.keras.metrics.MeanAbsoluteError()],
     )
 
@@ -41,7 +44,7 @@ def compile_and_fit(
         y_train,
         epochs=EPOCHS,
         validation_data=(x_val, y_val),
-        callbacks=[early_stopping],
+        callbacks=[val_early_stopping, train_early_stopping],
     )
 
     return model
@@ -199,7 +202,7 @@ class AssetUpdater:
         df["next_close"] = df["close"].shift(-1)
 
         # 80% of data will be used for training, 20% for validation
-        TRAIN_PERCENT = 0.80
+        TRAIN_PERCENT = 0.8
 
         # To scale features, the model should not have access to future values,
         # so the normalization is done using only training data.
@@ -209,7 +212,7 @@ class AssetUpdater:
 
         df_norm = (df - train_mean) / train_std
 
-        SEQ_LEN = 7
+        SEQ_LEN = 3
         df_norm_seq = create_seq(df_norm, SEQ_LEN)
         df_norm_seq, to_predict = df_norm_seq[:-1], df_norm_seq[-1]
 
@@ -217,8 +220,8 @@ class AssetUpdater:
         x_train, y_train, x_val, y_val = split_data(df_norm_seq, TRAIN_PERCENT)
 
         # Create model
-        LSTM_UNITS = 128
-        DROPOUT_RATE = 0.2
+        LSTM_UNITS = 64
+        DROPOUT_RATE = 0.025
         model = tf.keras.models.Sequential(
             [
                 tf.keras.layers.LSTM(
@@ -226,15 +229,17 @@ class AssetUpdater:
                     input_shape=(x_train.shape[1:]),
                     return_sequences=True,
                     activation="relu",
+                    dropout=DROPOUT_RATE,
+                    recurrent_dropout=DROPOUT_RATE,
                 ),
-                tf.keras.layers.Dropout(DROPOUT_RATE),
                 tf.keras.layers.LSTM(
                     units=LSTM_UNITS,
                     input_shape=(x_train.shape[1:]),
                     activation="relu",
+                    dropout=DROPOUT_RATE,
+                    recurrent_dropout=DROPOUT_RATE,
                 ),
-                tf.keras.layers.Dropout(DROPOUT_RATE),
-                tf.keras.layers.Dense(units=SEQ_LEN),
+                tf.keras.layers.Dense(units=1),
             ]
         )
 
