@@ -15,5 +15,5 @@ gcloud functions \
   --allow-unauthenticated \
   --source $folder \
   --timeout 540s \
-  --memory 1024MB \
+  --memory 4096MB \
   --set-secrets 'DB_USERNAME=DB_USERNAME:latest','DB_PASSWORD=DB_PASSWORD:latest','DB_HOST=DB_HOST:latest','DB_PORT=DB_PORT:latest','DB_DATABASE=DB_DATABASE:latest','ALPHAVANTAGE_API_KEY=ALPHAVANTAGE_API_KEY:latest'
