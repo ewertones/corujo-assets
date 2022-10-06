@@ -11,3 +11,4 @@ pyyaml
 SQLAlchemy
 psycopg2
 tensorflow
+protobuf==3.20.*
