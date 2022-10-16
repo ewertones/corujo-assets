@@ -1,20 +1,19 @@
 import os
 import re
-from datetime import datetime, time, timezone, timedelta
+from datetime import datetime, time, timedelta, timezone
 from string import Template
-import requests
-import pandas as pd
-
-from sqlalchemy import create_engine
-from sqlalchemy.orm import Session
-from sqlalchemy.dialects.postgresql import insert
-from sqlalchemy.sql import func
-
-from models.models import Assets, AssetPredictions, AssetValues
 
 import numpy as np
+import pandas as pd
+import requests
 import tensorflow as tf
+from sqlalchemy import create_engine
+from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy.orm import Session
+from sqlalchemy.sql import func
 from tensorflow.keras.callbacks import EarlyStopping
+
+from models.models import AssetPredictions, Assets, AssetValues
 
 
 def compile_and_fit(
