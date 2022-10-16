@@ -1,6 +1,6 @@
 #! /bin/bash
 
-modified_folders=$(git diff --name-only HEAD^ HEAD functions/ scheduler/ | xargs -L1 dirname | uniq)
+modified_folders=$(git diff --name-only HEAD^ HEAD functions/ scheduler/ | cut -d/ -f1-2 | uniq)
 
 for function in $modified_folders; do
     FILE="${function}/cmd.sh"
