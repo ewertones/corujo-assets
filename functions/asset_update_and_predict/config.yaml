@@ -16,3 +16,21 @@ assets:
     type: FOREX
     currency: BRL
     description: "Dólar"
+
+  - name: ethereum
+    symbol: ETH
+    type: CRYPTO
+    currency: BRL
+    description: "Moeda digital descentralizada"
+
+  - name: vale
+    symbol: VALE3.SAO
+    type: STOCK
+    currency: BRL
+    description: "Vale"
+
+  - name: euro
+    symbol: EUR
+    type: FOREX
+    currency: BRL
+    description: "Euro"
