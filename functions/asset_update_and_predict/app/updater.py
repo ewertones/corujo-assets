@@ -23,7 +23,7 @@ def compile_and_fit(
     x_val: np.ndarray,
     y_val: np.ndarray,
 ) -> tf.keras.models.Sequential:
-    PATIENCE = 15
+    PATIENCE = 10
     val_early_stopping = EarlyStopping(
         monitor="val_loss", patience=PATIENCE, mode="min", restore_best_weights=True
     )
@@ -37,7 +37,7 @@ def compile_and_fit(
         metrics=[tf.keras.metrics.MeanAbsoluteError()],
     )
 
-    EPOCHS = 100
+    EPOCHS = 50
     model.fit(
         x_train,
         y_train,
@@ -147,7 +147,7 @@ class AssetUpdater:
             "https://www.alphavantage.co/query"
             f"?function={option['function']}"
             f"&{option['symbol'].substitute(symbol=asset.symbol)}"
-            f"&outputsize=compact&datatype=json"
+            f"&outputsize=full&datatype=json"
             f"&apikey={ALPHAVANTAGE_API_KEY}"
         )
         res = requests.get(url)
