@@ -110,9 +110,14 @@ class AssetUpdater:
     def update_historical_data(self):
         options = {
             "STOCK": {
-                "function": "TIME_SERIES_DAILY",
+                "function": "TIME_SERIES_DAILY_ADJUSTED",
                 "symbol": Template("symbol=$symbol"),
                 "key": "Time Series (Daily)",
+                "to_drop": [
+                    "5. adjusted close",
+                    "7. dividend amount",
+                    "8. split coefficient",
+                ],
             },
             "FOREX": {
                 "function": "FX_DAILY",
